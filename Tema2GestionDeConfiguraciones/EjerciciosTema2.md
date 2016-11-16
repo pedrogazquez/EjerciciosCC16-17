@@ -97,32 +97,71 @@ YAML y JSON son estándares de representaciones de datos como XML, que hacen má
 ```
 
 
-##Ejercicios 4: 1.Desplegar la aplicación realizada con todos los módulos necesarios usando un playbook de Ansible.
-Lo primero que hacemos es añadir lo siguiente en el archivo **ansible_hosts**:
+##Ejercicios 4: Provisionar una máquina virtual en algún entorno con los que trabajemos habitualmente usando Salt.
 
-![archivoansihosts](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20194256_zps8o5b7ync.png)
 
-Luego definimos el archivo .yml que en mi caso se llama **scriptansible.yml** y contiene lo siguiente:
-```
-- hosts: azure
-  sudo: yes
-  remote_user: pgazquez
-  tasks:
-  - name: Instalar paquetes 
-    apt: name=python-setuptools state=present
-    apt: name=build-essential state=present
-    apt: name=python-dev state=present
-    apt: name=git state=present
-  - name: Descargar aplicacion de GitHub
-    git: repo=https://github.com/pedrogazquez/appBares.git dest=appBares clone=yes force=yes
-  - name: Permisos de ejecucion
-    command: chmod -R +x appBares
-  - name: Instalar requisitos
-    command: sudo pip install -r appBares/requirements.txt
-  - name: ejecutar
-    command: nohup sudo python appBares/manage.py runserver 0.0.0.0:5050
+##Ejercicios 5: Desplegar los fuentes de la aplicación de DAI o cualquier otra aplicación que se encuentre en un servidor git público en la máquina virtual Azure (o una máquina virtual local) usando ansible.
 
 ```
-Y lo he ejecutado con la orden **ansible-playbook -u pgazquez scriptansible.yml** y este ha sido el resultado:
+sudo pip install paramiko PyYAML jinja2 httplib2 ansible
+```
+Luego creamos el inventario añadiendo la máquina virtual de Azure:
+```
+echo "ubuntu-pgazquez.cloudapp.net" > ~/ansible_hosts
+```
+Y definimos la variable de entorno para que Ansible sepa donde está el fichero de hosts:
+```
+export ANSIBLE_HOSTS=~/ansible_hosts
+```
+Lo que hacemos ahora es arrancar la máquina azure del tema anterior, previo logeándonos en azure:
+```
+azure login
+azure vm start ubuntu-pgazquez
+```
+Luego configuramos SSH generando las claves para conectar con la máquina sin necesidad de autenticarnos cada vez:
+```
+ssh-keygen -t dsa
+ssh-copy-id -i .ssh/id_dsa.pub pgazquez@ubuntu-pgazquez.cloudapp.net
+```
+Como se puede ver efectivamente después de configurar SSH no nos debería de pedir el password:
+![sshazuresin](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-03%20142350_zpsy2fonazf.png)
 
-![contenidoplaybook-ansible](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20230742_zpslrk2dbxe.png)
+Ahora comprobamos que hay conexión con Ansible:
+```
+ansible all -u pgazquez -m ping
+```
+Y comprobamos que efectivamente hay:
+![pingAzure](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-03%20142851_zps9zl3jenn.png)
+
+Lo siguiente es instalar las dependencias neccesarias en la máquina para empezar a arrancar nuestra app:
+```
+ansible all -u pgazquez -a "sudo apt-get install -y python-setuptools python-dev build-essential git"
+ansible all -u pgazquez -m command -a "sudo easy_install pip" 
+```
+Una vez hecho esto descargamos la aplicación desde nuestro repositorio  de GitHub:
+```
+ansible all -u pgazquez -m git -a "repo=https://github.com/pedrogazquez/appBares.git  dest=~/pruebaDAI version=HEAD"
+```
+En la siguiente captura vemos que el repositorio se ha copiado correctamente:
+![repoenAzure](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-03%20160827_zpsts3m5kmv.png)
+
+A la hora de instalar los requirements de mi app he tenido problemas con Pillow, así que antes de instalar los requirements ejecutamos el siguiente comando para que no nos de problemas y seguidamente los requirements:
+```
+ansible all -m shell -a 'sudo apt-get install -y libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms1-dev libwebp-dev'
+ansible all -u pgazquez -m command -a "sudo pip install -r pruebaDAI/requirements.txt"
+```
+Ya está todo preparado para ejecutar nuestra app así que procedemos a ello, antes tenemos que liberar el puerto 80 para ejecutarla:
+```
+ansible all -u pgazquez -m command -a "sudo fuser -k 80/tcp"
+ansible all -u pgazquez -m command -a "sudo python pruebaDAI/manage.py runserver 0.0.0.0:80"
+```
+![arrancandoEnAzure](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20191638_zpsgidqkwec.png)
+
+Y vemos que todo funciona correctamente en el navegador:
+
+![appAzureCorriendo](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20190342_zpsejj0nxrs.png)
+
+Por último y como siempre "apagamos" la máquina de azure:
+```
+azure vm shutdown ubuntu-pgazquez
+```
