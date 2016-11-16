@@ -100,6 +100,7 @@ YAML y JSON son estándares de representaciones de datos como XML, que hacen má
 ##Ejercicios 4: Provisionar una máquina virtual en algún entorno con los que trabajemos habitualmente usando Salt.
 
 
+
 ##Ejercicios 5: Desplegar los fuentes de la aplicación de DAI o cualquier otra aplicación que se encuentre en un servidor git público en la máquina virtual Azure (o una máquina virtual local) usando ansible.
 
 ```
