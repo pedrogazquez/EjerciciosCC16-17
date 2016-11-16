@@ -72,3 +72,26 @@ Y ha instalado todo correctamente como podemos ver a continuación:
 
 ![cheftodocorre](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-03%20130646_zpsl57y3vga.png)
 
+
+##Ejercicios 3: Escribir en YAML la siguiente estructura de datos en JSON
+```
+{ uno: "dos",
+  tres: [ 4, 5, "Seis", { siete: 8, nueve: [ 10, 11 ] } ] } 
+
+```
+
+YAML y JSON son estándares de representaciones de datos como XML, que hacen más fácil el intercambio de información entre servicios y aplicaciones. Aquí la estructura en YAML:
+
+```
+---
+    uno: "dos"
+    tres: 
+        - 4
+        - 5
+        - "Seis"
+        - 
+            siete: 8
+            nueve: 
+                - 10
+                - 11
+```
