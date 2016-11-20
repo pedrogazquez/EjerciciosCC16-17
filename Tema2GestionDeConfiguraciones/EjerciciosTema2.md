@@ -101,7 +101,7 @@ YAML y JSON son estándares de representaciones de datos como XML, que hacen má
 
 
 
-##Ejercicios 5: Desplegar los fuentes de la aplicación de DAI o cualquier otra aplicación que se encuentre en un servidor git público en la máquina virtual Azure (o una máquina virtual local) usando ansible.
+##Ejercicios 5: Desplegar los fuentes de  de una aplicación cualquiera, propia o libre, que se encuentre en un servidor git público en la máquina virtual Azure (o una máquina virtual local) usando ansible.
 
 ```
 sudo pip install paramiko PyYAML jinja2 httplib2 ansible
@@ -166,3 +166,35 @@ Por último y como siempre "apagamos" la máquina de azure:
 ```
 azure vm shutdown ubuntu-pgazquez
 ```
+
+
+##Ejercicios 6: Desplegar la aplicación que se haya usado anteriormente con todos los módulos necesarios usando un playbook de Ansible.
+
+Lo primero que hacemos es añadir lo siguiente en el archivo **ansible_hosts**:
+
+![archivoansihosts](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20194256_zps8o5b7ync.png)
+
+Luego definimos el archivo .yml que en mi caso se llama **scriptansible.yml** y contiene lo siguiente:
+```
+- hosts: azure
+  sudo: yes
+  remote_user: pgazquez
+  tasks:
+  - name: Instalar paquetes 
+    apt: name=python-setuptools state=present
+    apt: name=build-essential state=present
+    apt: name=python-dev state=present
+    apt: name=git state=present
+  - name: Descargar aplicacion de GitHub
+    git: repo=https://github.com/pedrogazquez/appBares.git dest=appBares clone=yes force=yes
+  - name: Permisos de ejecucion
+    command: chmod -R +x appBares
+  - name: Instalar requisitos
+    command: sudo pip install -r appBares/requirements.txt
+  - name: ejecutar
+    command: nohup sudo python appBares/manage.py runserver 0.0.0.0:5050
+
+```
+Y lo he ejecutado con la orden **ansible-playbook -u pgazquez scriptansible.yml** y este ha sido el resultado:
+
+![contenidoplaybook-ansible](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20230742_zpslrk2dbxe.png)
