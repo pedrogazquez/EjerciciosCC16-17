@@ -38,6 +38,7 @@ vagrant ssh
 
 
 
+
 #Ejercicios 3: Crear un script para provisionar `nginx` o cualquier otro servidor web que pueda ser útil para alguna otra práctica
 He añadido en el fichero **Vagrantfile** lo siguiente:
 ```
