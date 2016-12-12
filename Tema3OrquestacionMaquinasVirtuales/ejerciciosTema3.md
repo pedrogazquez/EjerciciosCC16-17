@@ -1,4 +1,5 @@
-##Ejercicios 6: Instalar una máquina virtual Debian usando Vagrant y conectar con ella.
+##Ejercicios 1: Instalar una máquina virtual Debian usando Vagrant y conectar con ella.
+
 Para realizar este ejercicio lo primero que he hecho ha sido instalar vagrant:
 ```
 sudo apt-get install vagrant
@@ -32,7 +33,11 @@ vagrant ssh
 
 ![vagrantssh](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-04%20235209_zpsld4tyu1r.png)
 
-##Ejercicios 7: Crear un script para provisionar `nginx` o cualquier otro servidor web que pueda ser útil para alguna otra práctica
+#
+##Ejercicios 2: Instalar una máquina virtual ArchLinux o FreeBSD para KVM, otro hipervisor libre, usando Vagrant y conectar con ella. 
+
+
+#Ejercicios 3: Crear un script para provisionar `nginx` o cualquier otro servidor web que pueda ser útil para alguna otra práctica
 He añadido en el fichero **Vagrantfile** lo siguiente:
 ```
 config.vm.provision "shell",
@@ -49,7 +54,7 @@ sudo service nginx status
 
 ![nginxvagrant](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/Captura%20de%20pantalla%20de%202016-02-05%20101250_zps1hepxrat.png)
 
-##Ejercicios 8: Configurar tu máquina virtual usando vagrant con el provisionador ansible
+##Ejercicios 4: Configurar tu máquina virtual usando vagrant con el provisionador ansible
 
 Lo primero que hacemos es instalar el provisionador de azure para Vagrant:
 ```
