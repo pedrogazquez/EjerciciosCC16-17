@@ -37,6 +37,7 @@ vagrant ssh
 ##Ejercicios 2: Instalar una máquina virtual ArchLinux o FreeBSD para KVM, otro hipervisor libre, usando Vagrant y conectar con ella. 
 
 
+
 #Ejercicios 3: Crear un script para provisionar `nginx` o cualquier otro servidor web que pueda ser útil para alguna otra práctica
 He añadido en el fichero **Vagrantfile** lo siguiente:
 ```
