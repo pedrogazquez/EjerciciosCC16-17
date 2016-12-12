@@ -36,7 +36,30 @@ vagrant ssh
 #
 ##Ejercicios 2: Instalar una máquina virtual ArchLinux o FreeBSD para KVM, otro hipervisor libre, usando Vagrant y conectar con ella. 
 
+Para añadirlo como hemos visto en el ejercicio anterior, primero descargamos la imagen de ArchLinux para KVM:
 
+```
+vagrant box add ArchLinux https://vagrant-kvm-boxes.s3.amazonaws.com/archlinux-kvm.box
+```
+Así se añade correctamente como se puede ver en la siguiente captura:
+
+![archLinuxAdded](http://i1042.photobucket.com/albums/b422/Pedro_Gazquez_Navarrete/aniadiendoArch_zpsgsaqbzz5.png)
+
+Como anteriormente creamos el fichero Vagrantfile:
+
+```
+vagrant init arch
+```
+
+Arrancamos la máquina:
+```
+vagrant up
+```
+
+Y por último conectamos por ssh:
+```
+vagrant ssh
+```
 
 
 #Ejercicios 3: Crear un script para provisionar `nginx` o cualquier otro servidor web que pueda ser útil para alguna otra práctica
